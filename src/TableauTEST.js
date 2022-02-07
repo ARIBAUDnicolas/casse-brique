@@ -32,7 +32,6 @@ class Tableau1 extends Phaser.Scene{
         this.balle.setDisplaySize(20, 20);
         this.balle.body.setBounce(1,1);
         this.balle.body.setAllowGravity(false);
-        this.balle.setTintFill(0xffffff)
 
 
         /*****LES MURS*******/
@@ -57,25 +56,23 @@ class Tableau1 extends Phaser.Scene{
         this.player = this.physics.add.sprite((this.longeur/2), this.longeur-30, 'Murs');
         this.player.setDisplaySize(200, 20);
         this.player.body.setAllowGravity(false);
-        this.player.setTintFill(0xffffff)
 
 
         this.player.setImmovable(true)
 
         /*****BRIQUES*******/
 
-
         this.brique = this.physics.add.sprite((this.longeur/2), this.longeur/2, 'Murs');
         this.brique.setDisplaySize(60, 20);
         this.brique.body.setAllowGravity(false);
+
+
         this.brique.setImmovable(true)
-        this.physics.add.collider(this.brique, this.balle,function(){
-            console.log('touche brique')
-
-        })
 
 
-        /*****Collisions*******/
+
+
+
         let me = this;
         this.physics.add.collider(this.player, this.balle,function(){
             console.log('touche player')
@@ -89,17 +86,25 @@ class Tableau1 extends Phaser.Scene{
 
         this.balle.setMaxVelocity(this.maxspeed,this.maxspeed)
 
+        this.physics.add.collider(this.gauche, this.player)
+        this.physics.add.collider(this.droite, this.player)
 
 
         this.playerSpeed = 0
 
 
+        this.joueurGauche = new Joueur('Trigger','joueurGauche')
+        this.joueurDroite = new Joueur('Count','joueurDroite')
+        console.log(this.joueurGauche)
+
         this.balleAucentre();
         this.initKeyboard();
 
 
-    }
 
+
+
+    }
 
     rebond(players){
         let me = this ;
@@ -112,76 +117,81 @@ class Tableau1 extends Phaser.Scene{
         positionRelativePlayers= (positionRelativePlayers / hauteurPlayers)
         positionRelativePlayers = positionRelativePlayers*2-1;
 
-        this.balle.setVelocityX((positionRelativePlayers)*20);
-        /**moi être presque suicidé, mais moi avoir réussit**/
+        this.balle.setVelocityY((this.balle.body.velocity.y + positionRelativePlayers) * 100);
 
     }
+
+    balleAucentre(){
+        this.balle.x = this.largeur/2
+        this.balle.y = this.hauteur/2
+        this.speedX = 0
+
+        this.balle.setVelocityX(Math.random()>0.5?-300:300)
+        this.balle.setVelocityY(0)
+    }
+
     /**
      *
      * @param {Joueur} joueur
      */
-    loose(joueur){
-
-        joueur.score =0;
-
+    win(joueur){
+        //alert('Joueur '+joueur.name+' gagne')
+        joueur.score ++;
+        //alert('Le score est de '+this.joueurGauche.score+' a '+this.joueurDroite.score)
         this.balleAucentre();
     }
 
-    balleAucentre(){
-        
-        this.balle.x = this.longeur/2
-        this.balle.y = this.longeur/2
-        this.speedX = 0
-
-
-
-        this.balle.setVelocityX(0)
-        this.balle.setVelocityY(500)
-    }
-
     update(){
-        if(this.balle.y>this.longeur) {
-            this.balleAucentre()
+        if(this.balle.x>this.largeur){
+            this.win(this.joueurGauche);
         }
-
+        if(this.balle.x<0){
+            this.win(this.joueurDroite);
+        }
         this.player.x += this.playerSpeed
 
-        if (this.player.x<120){
-            this.player.x = 120
+
+        if (this.player.x<30){
+            this.player.x = 30
         }
-        if (this.player.x>this.longeur-120){
-            this.player.x =this.longeur-120
+        if (this.player.x>this.longeur-30){
+            this.player.x =this.longeur-30
         }
 
-
-
-
+        if (this.balle.y>)
     }
 
     initKeyboard(){
         let me = this
         this.input.keyboard.on('keydown', function (kevent) {
             switch (kevent.keyCode) {
-                case Phaser.Input.Keyboard.KeyCodes.LEFT:
+                case Phaser.Input.Keyboard.KeyCodes.q:
                     me.playerSpeed = -7
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.RIGHT:
+                case Phaser.Input.Keyboard.KeyCodes.d:
                     me.playerSpeed = 7
                     break;
             }
         });
         this.input.keyboard.on('keyup', function (kevent) {
             switch (kevent.keyCode) {
-                case Phaser.Input.Keyboard.KeyCodes.LEFT:
-                    me.playerSpeed = 0
+                case Phaser.Input.Keyboard.KeyCodes.S:
+                    me.player1Speed = 0
                     break;
-                case Phaser.Input.Keyboard.KeyCodes.RIGHT:
-                    me.playerSpeed = 0
+                case Phaser.Input.Keyboard.KeyCodes.X:
+                    me.player1Speed = 0
                     break;
-
+                case Phaser.Input.Keyboard.KeyCodes.J:
+                    me.player2Speed = 0
+                    break;
+                case Phaser.Input.Keyboard.KeyCodes.N:
+                    me.player2Speed = 0
+                    break;
             }
         });
     }
 }
+
+
 
 
